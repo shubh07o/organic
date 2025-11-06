@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry Mock Test: Organic Chemistry</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Apply Inter font to the whole page */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9; /* gray-100 */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8; /* gray-400 */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b; /* gray-500 */
+        }
+        /* Style for the custom radio button label when checked */
+        input[type="radio"]:checked + label {
+            background-color: #e0f2fe; /* sky-100 */
+            border-color: #0ea5e9; /* sky-500 */
+            font-weight: 600;
+            color: #0369a1; /* sky-700 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div id="app" class="bg-white p-6 md:p-8 rounded-2xl shadow-xl w-full max-w-3xl mx-auto">
+
+        <div id="start-screen" class="text-center">
+            <h1 class="text-3xl font-bold text-gray-800 mb-4">Chemistry Mock Test</h1>
+            <p class="text-lg text-gray-600 mb-6">Chapters: Organic Chemistry, Hydrocarbons, Biomolecules</p>
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-left">
+                <h2 class="text-xl font-semibold text-blue-800 mb-2">Test Instructions</h2>
+                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                    <li>Total Questions: <strong>20</strong></li>
+                    <li>Time Limit: <strong>30 Minutes</strong></li>
+                    <li>Correct Answer: <strong>+1 Mark</strong></li>
+                    <li>Incorrect Answer: <strong>-0.25 Marks</strong></li>
+                    <li>Unanswered: <strong>0 Marks</strong></li>
+                    <li>Click "Submit Test" when you are finished.</li>
+                </ul>
+            </div>
+            <button id="start-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition-all duration-300 text-lg shadow-md">
+                Start Test
+            </button>
+        </div>
+
+        <div id="test-screen" class="hidden">
+            <div class="flex justify-between items-center mb-6 sticky top-0 bg-white pt-2 pb-4 border-b">
+                <h1 class="text-2xl font-bold text-gray-800">Chemistry Test</h1>
+                <div id="timer" class="font-mono text-2xl font-bold bg-gray-100 text-gray-800 py-2 px-4 rounded-lg shadow-inner">
+                    30:00
+                </div>
+            </div>
+
+            <div id="questions-container" class="space-y-8 max-h-[75vh] overflow-y-auto pr-2">
+                </div>
+        </div>
+
+        <div id="results-screen" class="hidden">
+            <h1 class="text-3xl font-bold text-gray-800 mb-4 text-center">Test Results</h1>
+            
+            <div id="score-summary" class="bg-gray-50 rounded-lg p-6 mb-6 text-center shadow-md">
+                </div>
+
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Detailed Breakdown</h2>
+            <div id="results-details" class="space-y-4 max-h-[50vh] overflow-y-auto pr-2">
+                </div>
+            
+            <div class="mt-8">
+                <button id="restart-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition-all duration-300 text-lg shadow-md">
+                    Take Test Again
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- 1. DATA: All 20 Questions ---
+        const questions = [
+            // 1. General Organic Chemistry (GOC)
+            {
+                q: "1. What is the correct IUPAC name for the compound CH₃-CH(Cl)-CH₂-CH₂-OH?",
+                options: [
+                    "(a) 4-Chlorobutan-1-ol",
+                    "(b) 1-Chlorobutan-4-ol",
+                    "(c) 4-Hydroxy-1-chlorobutane",
+                    "(d) 3-Chlorobutan-1-ol"
+                ],
+                answer: 3
+            },
+            {
+                q: "2. Which of the following carbocations is the most stable?",
+                options: [
+                    "(a) (CH₃)₃C⁺ (Tertiary)",
+                    "(b) (CH₃)₂CH⁺ (Secondary)",
+                    "(c) CH₃CH₂⁺ (Primary)",
+                    "(d) CH₃⁺ (Methyl)"
+                ],
+                answer: 0
+            },
+            {
+                q: "3. Which of the following compounds exhibits geometrical (cis-trans) isomerism?",
+                options: [
+                    "(a) But-1-ene",
+                    "(b) 2-Methylpropene",
+                    "(c) But-2-ene",
+                    "(d) Propyne"
+                ],
+                answer: 2
+            },
+            {
+                q: "4. Arrange the following in decreasing order of acidity: Phenol (I), Ethanol (II), p-Nitrophenol (III), p-Cresol (IV)",
+                options: [
+                    "(a) III > I > IV > II",
+                    "(b) III > IV > I > II",
+                    "(c) II > IV > I > III",
+                    "(d) I > III > IV > II"
+                ],
+                answer: 0
+            },
+            {
+                q: "5. Which of the following is the strongest base in an aqueous solution?",
+                options: [
+                    "(a) Aniline",
+                    "(b) Ammonia (NH₃)",
+                    "(c) Dimethylamine ((CH₃)₂NH)",
+                    "(d) Trimethylamine ((CH₃)₃N)"
+                ],
+                answer: 2
+            },
+            // 2. Hydrocarbons (Alkanes, Alkenes, Alkynes, Aromatic)
+            {
+                q: "6. The major product formed when propene reacts with HBr in the presence of a peroxide (Kharasch effect) is:",
+                options: [
+                    "(a) 2-Bromopropane",
+                    "(b) 1-Bromopropane",
+                    "(c) 1,2-Dibromopropane",
+                    "(d) No reaction"
+                ],
+                answer: 1
+            },
+            {
+                q: "7. Ozonolysis (O₃ followed by Zn/H₂O) of But-2-ene gives:",
+                options: [
+                    "(a) Two molecules of acetaldehyde",
+                    "(b) Two molecules of formaldehyde",
+                    "(c) One molecule of propanal and one of formaldehyde",
+                    "(d) Two molecules of propanone"
+                ],
+                answer: 0
+            },
+            {
+                q: "8. Benzene undergoes electrophilic substitution (like nitration) instead of addition reactions because:",
+                options: [
+                    "(a) It is a planar molecule",
+                    "(b) It is unsaturated",
+                    "(c) It has a high C/H ratio",
+                    "(d) It retains its aromatic stability"
+                ],
+                answer: 3
+            },
+            {
+                q: "9. Which of the following is the most acidic?",
+                options: [
+                    "(a) Ethane",
+                    "(b) Ethene",
+                    "(c) Ethyne",
+                    "(d) Benzene"
+                ],
+                answer: 2
+            },
+            // 3. Haloalkanes, Alcohols, Phenols & Ethers
+            {
+                q: "10. The reaction of tert-butyl bromide ((CH₃)₃C-Br) with aqueous KOH proceeds primarily by:",
+                options: [
+                    "(a) Sₙ1 mechanism",
+                    "(b) Sₙ2 mechanism",
+                    "(c) E2 mechanism",
+                    "(d) Free-radical mechanism"
+                ],
+                answer: 0
+            },
+            {
+                q: "11. Which of the following is most reactive towards an Sₙ2 reaction?",
+                options: [
+                    "(a) CH₃Cl",
+                    "(b) CH₃CH₂Cl",
+                    "(c) (CH₃)₂CHCl",
+                    "(d) (CH₃)₃CCl"
+                ],
+                answer: 0
+            },
+            {
+                q: "12. Haloalkanes react with AgCN to form alkyl isocyanides as the major product. This is because AgCN:",
+                options: [
+                    "(a) is an ionic compound.",
+                    "(b) is a covalent compound, with nitrogen as the nucleophilic site.",
+                    "(c) is a stronger nucleophile than KCN.",
+                    "(d) is a very weak nucleophile."
+                ],
+                answer: 1
+            },
+            {
+                q: "13. The Lucas test (conc. HCl + anhy. ZnCl₂) is used to distinguish between:",
+                options: [
+                    "(a) Aldehydes and ketones",
+                    "(b) Primary, secondary, and tertiary alcohols",
+                    "(c) Alcohols and phenols",
+                    "(d) Alkenes and alkanes"
+                ],
+                answer: 1
+            },
+            // 4. Aldehydes, Ketones, Carboxylic Acids & Amines
+            {
+                q: "14. Which of the following compounds will undergo an Aldol condensation?",
+                options: [
+                    "(a) HCHO (Formaldehyde)",
+                    "(b) C₆H₅CHO (Benzaldehyde)",
+                    "(c) CH₃CHO (Acetaldehyde)",
+                    "(d) (CH₃)₃C-CHO (Pivalaldehyde)"
+                ],
+                answer: 2
+            },
+            {
+                q: "15. Which of the following compounds will give a positive Tollens' test (silver mirror test)?",
+                options: [
+                    "(a) CH₃-CO-CH₃ (Acetone)",
+                    "(b) CH₃-CH₂-OH (Ethanol)",
+                    "(c) CH₃-COOH (Acetic Acid)",
+                    "(d) CH₃-CHO (Acetaldehyde)"
+                ],
+                answer: 3
+            },
+            {
+                q: "16. The Cannizzaro reaction is not given by:",
+                options: [
+                    "(a) Formaldehyde",
+                    "(b) Benzaldehyde",
+                    "(c) Acetaldehyde",
+                    "(d) 2,2-Dimethylpropanal"
+                ],
+                answer: 2
+            },
+            {
+                q: "17. Which of the following is the strongest acid?",
+                options: [
+                    "(a) CH₃COOH",
+                    "(b) HCOOH",
+                    "(c) Cl-CH₂-COOH",
+                    "(d) F-CH₂-COOH"
+                ],
+                answer: 3
+            },
+            {
+                q: "18. The Carbylamine test (heating with CHCl₃ and alcoholic KOH) is used to detect:",
+                options: [
+                    "(a) Primary amines",
+                    "(b) Secondary amines",
+                    "(c) Tertiary amines",
+                    "(d) All of the above"
+                ],
+                answer: 0
+            },
+            // 5. Biomolecules & Polymers
+            {
+                q: "19. Glucose and Fructose are:",
+                options: [
+                    "(a) Functional isomers",
+                    "(b) Chain isomers",
+                    "(c) Position isomers",
+                    "(d) Geometrical isomers"
+                ],
+                answer: 0
+            },
+            {
+                q: "20. Natural rubber is a polymer of:",
+                options: [
+                    "(a) Isoprene",
+                    "(b) Neoprene",
+                    "(c) Styrene",
+                    "(d) Ethylene"
+                ],
+                answer: 0
+            }
+        ];
+
+        // --- 2. DOM Elements ---
+        const startScreen = document.getElementById('start-screen');
+        const testScreen = document.getElementById('test-screen');
+        const resultsScreen = document.getElementById('results-screen');
+
+        const startBtn = document.getElementById('start-btn');
+        const restartBtn = document.getElementById('restart-btn');
+
+        const timerEl = document.getElementById('timer');
+        const questionsContainer = document.getElementById('questions-container');
+        const scoreSummaryEl = document.getElementById('score-summary');
+        const resultsDetailsEl = document.getElementById('results-details');
+
+        // --- 3. State Variables ---
+        let timerSeconds = 1800; // 30 minutes * 60 seconds
+        let timerInterval = null;
+        let userAnswers = {}; // Stores { questionIndex: optionIndex }
+
+        // --- 4. Functions ---
+
+        /**
+         * Starts the test: Hides start, shows test, renders questions, starts timer.
+         */
+        function startTest() {
+            startScreen.style.display = 'none';
+            resultsScreen.style.display = 'none';
+            testScreen.style.display = 'block';
+            
+            // Reset state for a new test
+            userAnswers = {};
+            timerSeconds = 1800; // Reset to 30 minutes
+            timerEl.textContent = "30:00";
+            timerEl.classList.remove('text-red-600', 'animate-pulse');
+
+            renderQuestions();
+            startTimer();
+        }
+
+        /**
+         * Renders all questions and options into the questions container.
+         * Also adds the submit button at the end of the container.
+         */
+        function renderQuestions() {
+            questionsContainer.innerHTML = ''; // Clear old questions
+            questions.forEach((q, index) => {
+                const questionBlock = document.createElement('div');
+                questionBlock.className = 'question-block mb-8 p-4 bg-gray-50 rounded-lg shadow-sm';
+
+                // Question Text
+                const questionText = document.createElement('p');
+                questionText.className = 'question-text text-lg font-semibold text-gray-800 mb-4';
+                questionText.textContent = q.q; // Use textContent for safety
+                questionBlock.appendChild(questionText);
+
+                // Options Group
+                const optionsGroup = document.createElement('div');
+                optionsGroup.className = 'options-group space-y-3';
+
+                q.options.forEach((option, optionIndex) => {
+                    const radioId = `q${index}_option${optionIndex}`;
+                    
+                    const radioInput = document.createElement('input');
+                    radioInput.type = 'radio';
+                    radioInput.id = radioId;
+                    radioInput.name = `q${index}`;
+                    radioInput.value = optionIndex;
+                    radioInput.className = 'hidden';
+                    
+                    radioInput.onchange = () => {
+                        userAnswers[index] = optionIndex;
+                    };
+
+                    const radioLabel = document.createElement('label');
+                    radioLabel.htmlFor = radioId;
+                    radioLabel.textContent = option; // Use textContent
+                    radioLabel.className = 'option-label block p-3 rounded-lg border-2 border-gray-200 hover:bg-gray-100 cursor-pointer transition-all duration-200';
+                    
+                    optionsGroup.appendChild(radioInput);
+                    optionsGroup.appendChild(radioLabel);
+                });
+
+                questionBlock.appendChild(optionsGroup);
+                questionsContainer.appendChild(questionBlock);
+            });
+
+            // Add the submit button to the end of the questions container
+            const submitButtonContainer = document.createElement('div');
+            submitButtonContainer.className = 'mt-8';
+            
+            const submitButton = document.createElement('button');
+            submitButton.id = 'submit-btn';
+            submitButton.className = 'w-full bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition-all duration-300 text-lg shadow-md';
+            submitButton.textContent = 'Submit Test';
+            
+            submitButton.addEventListener('click', submitTest); 
+            
+            submitButtonContainer.appendChild(submitButton);
+            questionsContainer.appendChild(submitButtonContainer);
+        }
+
+        /**
+         * Starts the countdown timer.
+         */
+        function startTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval); // Clear any old timer
+            }
+
+            timerInterval = setInterval(() => {
+                timerSeconds--;
+                timerEl.textContent = formatTimerDisplay(timerSeconds);
+
+                // Add warning class when 5 minutes (300s) are left
+                if (timerSeconds <= 300 && !timerEl.classList.contains('text-red-600')) { 
+                    timerEl.classList.add('text-red-600');
+                    timerEl.classList.add('animate-pulse');
+                }
+
+                // Auto-submit when time runs out
+                if (timerSeconds <= 0) {
+                    submitTest();
+                }
+            }, 1000); // Update every second
+        }
+
+        /**
+         * Formats total seconds into MM:SS string.
+         */
+        function formatTimerDisplay(totalSeconds) {
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        /**
+         * Formats total seconds into a readable string (e.g., "58m 12s").
+         */
+        function formatTimeTaken(totalSeconds) {
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            
+            let parts = [];
+            if (minutes > 0) parts.push(`${minutes}m`);
+            parts.push(`${seconds}s`);
+            
+            return parts.join(' ');
+        }
+
+        /**
+         * Submits the test: stops timer, calculates score, shows results.
+         */
+        function submitTest() {
+            // Prevent multiple submissions
+            if (timerInterval === null && testScreen.style.display === 'none') {
+                return; 
+            }
+            
+            clearInterval(timerInterval);
+            timerInterval = null;
+
+            testScreen.style.display = 'none';
+            resultsScreen.style.display = 'block';
+
+            let score = 0;
+            let correctCount = 0;
+            let incorrectCount = 0;
+            let unansweredCount = 0;
+            let resultsHTML = '';
+            // Calculate time taken (total time - remaining time)
+            const timeTaken = 1800 - timerSeconds;
+
+            questions.forEach((q, index) => {
+                const userAnswerIndex = userAnswers[index];
+                const correctAnswerIndex = q.answer;
+                const isCorrect = userAnswerIndex === correctAnswerIndex;
+
+                let statusClass = '';
+                let statusText = '';
+                let answerDetails = '';
+
+                if (userAnswerIndex === undefined) {
+                    // Unanswered
+                    unansweredCount++;
+                    statusClass = 'bg-yellow-100 border-yellow-300';
+                    statusText = '<span class="font-bold text-yellow-700">Not Answered (0)</span>';
+                    answerDetails = `<p class="text-gray-700 mt-1">Correct answer: <strong class="text-green-700">${q.options[correctAnswerIndex]}</strong></p>`;
+                } else if (isCorrect) {
+                    // Correct
+                    score += 1;
+                    correctCount++;
+                    statusClass = 'bg-green-100 border-green-300';
+                    statusText = '<span class="font-bold text-green-700">Correct (+1.00)</span>';
+                    answerDetails = `<p class="text-gray-700 mt-2">Your answer: <strong>${q.options[userAnswerIndex]}</strong></p>`;
+                } else {
+                    // Incorrect
+                    score -= 0.25;
+                    incorrectCount++;
+                    statusClass = 'bg-red-100 border-red-300';
+                    statusText = '<span class="font-bold text-red-700">Incorrect (-0.25)</span>';
+                    answerDetails = `
+                        <p class="text-gray-700 mt-2">Your answer: <strong class="text-red-700">${q.options[userAnswerIndex]}</strong></p>
+                        <p class="text-gray-700 mt-1">Correct answer: <strong class="text-green-700">${q.options[correctAnswerIndex]}</strong></p>
+                    `;
+                }
+
+                resultsHTML += `
+                    <div class="result-item p-4 rounded-lg border ${statusClass} shadow-sm">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center">
+                            <p class="font-semibold text-gray-800 mb-2 sm:mb-0">${q.q}</p>
+                            <div class="flex-shrink-0">${statusText}</div>
+                        </div>
+                        ${answerDetails}
+                    </div>
+                `;
+            });
+
+            // Display Score Summary
+            const maxScore = questions.length;
+            const scorePercentage = ((score / maxScore) * 100);
+            const finalPercentage = Math.max(0, scorePercentage).toFixed(1); // Ensure percentage isn't negative
+            
+            scoreSummaryEl.innerHTML = `
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Your Final Score: ${score.toFixed(2)} / ${maxScore}</h2>
+                <p class="text-4xl font-bold ${scorePercentage >= 40 ? 'text-green-600' : 'text-red-600'} mb-3">${finalPercentage}%</p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-center text-lg mb-4">
+                    <div class="p-2 bg-green-50 rounded-lg">
+                        <div class="font-bold text-green-700">Correct</div>
+                        <div class="text-2xl font-bold text-green-600">${correctCount}</div>
+                    </div>
+                    <div class="p-2 bg-red-50 rounded-lg">
+                        <div class="font-bold text-red-700">Incorrect</div>
+                        <div class="text-2xl font-bold text-red-600">${incorrectCount}</div>
+                    </div>
+                    <div class="p-2 bg-yellow-50 rounded-lg">
+                        <div class="font-bold text-yellow-700">Unanswered</div>
+                        <div class="text-2xl font-bold text-yellow-600">${unansweredCount}</div>
+                    </div>
+                </div>
+                <p class="text-lg text-gray-600">Time Taken: <strong>${formatTimeTaken(timeTaken)}</strong></p>
+            `;
+
+            // Display Detailed Results
+            resultsDetailsEl.innerHTML = resultsHTML;
+        }
+        
+        /**
+         * Resets the app to the start screen.
+         */
+        function restartTest() {
+            resultsScreen.style.display = 'none';
+            testScreen.style.display = 'none';
+            startScreen.style.display = 'block';
+        }
+
+        // --- 5. Event Listeners ---
+        startBtn.addEventListener('click', startTest);
+        restartBtn.addEventListener('click', restartTest);
+
+    </script>
+</body>
+</html>
